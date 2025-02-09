@@ -9,7 +9,7 @@ TMPICON="$_TMPDIR"/squashfs-root/.DirIcon
 COUNT=0
 
 _error() {
-	printf '\n%s\n\n' "ERROR: $*"
+	>&2 printf '\n%s\n\n' "ERROR: $*"
 	[ -d "$_TMPDIR" ] && rm -rf "$_TMPDIR"
 	exit 1
 }
