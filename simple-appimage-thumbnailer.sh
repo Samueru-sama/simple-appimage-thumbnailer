@@ -15,8 +15,7 @@ _error() {
 }
 
 _sanity_check() {
-	command -v magick 1>/dev/null || _error "Missing imagemagick dependency"
-	command -v rsvg-convert 1>/dev/null || _error "Missing rsvg-convert dependency"
+	command -v convert 1>/dev/null || _error "Missing imagemagick dependency"
 	[ -x "$INPUT" ] || _error "AppImage does not have executable permission"
 }
 
@@ -36,22 +35,13 @@ _get_diricon() (
 	fi
 )
 
-# Convert to SVG, TODO: Find a way to do this with imagemagick instead
-_convert_svg() {
-	if file "$TMPICON" | grep -q "SVG"; then
-		rsvg-convert "$TMPICON" -o "$TMPICON"
-	fi
-}
-
 _resize() {
-	magick "$TMPICON" -background none -thumbnail "$SIZE" "$TMPICON"
+	convert -background none -thumbnail "$SIZE" "$TMPICON" PNG:"$TMPICON"
 }
 
 _sanity_check
 mkdir -p "$_TMPDIR" || _error "Could not create temp directory"
 _get_diricon || _error "Failed to extract .DirIcon, is it an AppImage?"
-_convert_svg || _error "Failed to convert svg icon to png"
 _resize || _error "Failed to resize .DirIcon"
 mv -v "$TMPICON" "$OUTPUT"
 rm -rf "$_TMPDIR"
-
