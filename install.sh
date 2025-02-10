@@ -11,6 +11,9 @@ if [ "$(id -u)" = 0 ]; then
 	exit 1
 elif [ "$1" = "uninstall" ] || [ "$1" = "remove" ]; then
 	rm -fv "$TARGET_BIN" "$TARGET_ENTRY"
+elif ! command -v convert 1>/dev/null; then
+	echo "Missing imagemagick dependency, install it to continue"
+	exit 1
 elif command -v "$TARGET_BIN" 1>/dev/null; then
 	echo "simple-appimage-thumbnailer is already installed"
 	exit 1
@@ -26,4 +29,3 @@ else
 fi
 
 echo "All done!"
-
