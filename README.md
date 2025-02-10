@@ -22,7 +22,7 @@ Run `./install.sh uninstall` to uninstall the thumbnailer.
 
 * Nemo:
 
-![image](https://github.com/user-attachments/assets/4a8a81c7-920e-41ee-9e93-4b12b9422468)
+![image](https://github.com/user-attachments/assets/c015af21-ceca-42ba-a547-79cffea8daa7)
 
 * PCManFM:
 
@@ -30,7 +30,7 @@ Run `./install.sh uninstall` to uninstall the thumbnailer.
 
 * PCManFM-Qt:
 
-![image](https://github.com/user-attachments/assets/7a4c3246-2d8f-426c-b649-189a0c42a047)
+![image](https://github.com/user-attachments/assets/1a8b110c-2fac-4e8b-ba1e-7a4d0a79e18c)
 
 * Thunar:
 
