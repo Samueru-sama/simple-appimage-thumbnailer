@@ -36,12 +36,11 @@ _get_diricon() (
 )
 
 _resize() {
-	convert -background none -thumbnail "$SIZE" "$TMPICON" PNG:"$TMPICON"
+	convert -background none -thumbnail "$SIZE" "$TMPICON" PNG:"$OUTPUT"
 }
 
 _sanity_check
 mkdir -p "$_TMPDIR" || _error "Could not create temp directory"
 _get_diricon || _error "Failed to extract .DirIcon, is it an AppImage?"
-_resize || _error "Failed to resize .DirIcon"
-mv -v "$TMPICON" "$OUTPUT"
+_resize || _error "Failed to resize and move .DirIcon"
 rm -rf "$_TMPDIR"
