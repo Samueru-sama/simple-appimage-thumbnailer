@@ -15,7 +15,13 @@ _error() {
 }
 
 _sanity_check() {
-	command -v convert 1>/dev/null || _error "Missing imagemagick dependency"
+	if command -v magick 1>/dev/null; then
+		MAGICK=magick
+	elif command -v convert 1>/dev/null; then
+		MAGICK=convert
+	else
+		_error "Missing imagemagick dependency"
+	fi
 	[ -x "$INPUT" ] || _error "AppImage does not have executable permission"
 }
 
@@ -36,7 +42,7 @@ _get_diricon() (
 )
 
 _resize() {
-	convert -background none -thumbnail "$SIZE" "$TMPICON" PNG:"$OUTPUT"
+	"$MAGICK" -background none "$TMPICON" -thumbnail "$SIZE" PNG:"$OUTPUT"
 }
 
 _sanity_check
