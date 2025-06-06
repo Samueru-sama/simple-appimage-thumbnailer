@@ -1,15 +1,17 @@
 #!/bin/sh
 
-set -e
-
 if [ "$SAT_DEBUG" = 1 ]; then
 	set -x
 fi
 
+set -eu
+
 DEPENDENCIES="
 	awk
 	dwarfs
+	grep
 	head
+	mkdir
 	od
 	readlink
 	squashfuse
@@ -43,6 +45,17 @@ _dep_check() {
 			_error "Missing dependency $d"
 		fi
 	done
+}
+
+_install() {
+	if ! grep -q "$APPIMAGE" "$THUMBNAIL_ENTRY"; then
+		>&2 echo "Adding thumbnail entry for $APPIMAGE"
+		printf '%s\n%s\n%s\n%s\n'             \
+			"[Thumbnailer Entry]"         \
+			"TryExec=\"$APPIMAGE\""       \
+			"Exec=\"$APPIMAGE\" %i %o %s" \
+			"MimeType=application/vnd.appimage;" > "$THUMBNAIL_ENTRY"
+	fi
 }
 
 _find_offset() {
@@ -152,6 +165,10 @@ INPUT="$(readlink -f "$1")"
 OUTPUT="$(readlink -f "$2")"
 SIZE="$3"
 TMPDIR="${TMPDIR:-/tmp}"
+DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
+THUMBNAIL_ENTRY="$DATADIR/thumbnailers/simple-appimage-thumbnailer.thumbnailer"
+
+_install
 
 if ! _is_appimage "$INPUT"; then
 	_error "'$INPUT' is NOT an AppImage"
