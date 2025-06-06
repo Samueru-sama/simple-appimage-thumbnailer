@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Simple AppImage Thumbnailer
+Icon=sat
+Exec=sat
+Categories=Utility;
+Hidden=true
