@@ -141,6 +141,11 @@ if [ "$#" -lt 3 ]; then
 	_usage
 fi
 
+CURRENTDIR="$(cd "${0%/*}" && echo "$PWD")"
+if [ -d "$CURRENTDIR"/bin ]; then
+	export PATH="$CURRENTDIR/bin:$PATH"
+fi
+
 _dep_check $DEPENDENCIES
 
 INPUT="$(readlink -f "$1")"
