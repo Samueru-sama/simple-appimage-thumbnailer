@@ -1,4 +1,4 @@
 [Thumbnailer Entry]
-TryExec=simple-appimage-thumbnailer
-Exec=simple-appimage-thumbnailer %i %o %s
+TryExec=sat
+Exec=sat %i %o %s
 MimeType=application/vnd.appimage;
