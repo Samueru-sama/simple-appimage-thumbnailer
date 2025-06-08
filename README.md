@@ -1,6 +1,8 @@
 # simple-appimage-thumbnailer
 Simple AppImage thumbnailer in POSIX shell.
 
+To install simply run the [AppImage](https://github.com/Samueru-sama/simple-appimage-thumbnailer/releases) with the `--install` flag.
+
 **Works with the following file managers:** 
 
 * Caja:
