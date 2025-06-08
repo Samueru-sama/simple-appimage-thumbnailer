@@ -12,6 +12,7 @@ DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 THUMBNAIL_ENTRY="$DATADIR"/thumbnailers/simple-appimage-thumbnailer.thumbnailer
 
 if [ "$1" = "--install" ]; then
+	mkdir -p "$DATADIR"/thumbnailers
 	cp -v "$CURRENTDIR"/simple-appimage-thumbnailer.thumbnailer "$THUMBNAIL_ENTRY"
 	echo "Added thumbnail entry to $THUMBNAIL_ENTRY"
 
