@@ -32,20 +32,17 @@ jobs:
 
         SQUASHFUSE_URL="https://pkgs.pkgforge.dev/dl/bincache/$ARCH-linux/squashfuse/nixpkgs/squashfuse/raw.dl"
         
-        mkdir -p ./AppDir/bin
-        cp -v ./simple-appimage-thumbnailer.sh ./AppDir/AppRun
-        cd ./AppDir
+        cp -v ./sat.sh        ./AppDir/bin/sat
+        cp -v ./*.thumbnailer ./AppDir
 
-        wget --retry-connrefused --tries=30 "$SQUASHFUSE_URL" -O  ./bin/squashfuse
+        wget --retry-connrefused --tries=30 "$SQUASHFUSE_URL" -O  ./AppDir/bin/squashfuse
 
-        chmod +x ./AppRun ./bin/*
+        chmod +x ./AppDir/AppRun ./AppDir/bin/*
         
-        VERSION="$(./AppRun --version)"
-        [ -n "$VERSION" ]
+        VERSION="$(./AppDir/AppRun --version)"
         echo "$VERSION" > ~/version
         
         # make appimage with uruntime
-        cd ..
         wget --retry-connrefused --tries=30 "$URUNTIME" -O ./uruntime
         wget --retry-connrefused --tries=30 "$URUNTIME_LITE" -O ./uruntime-lite
         chmod +x ./uruntime*
