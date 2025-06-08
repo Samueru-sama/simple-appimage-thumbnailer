@@ -1,5 +1,5 @@
 # simple-appimage-thumbnailer
-Simple AppImage thumbnailer in POSIX shell.
+Simple AppImage thumbnailer in POSIX shell. Supports DwarFS and SquashFS filesystems.
 
 To install simply run the [AppImage](https://github.com/Samueru-sama/simple-appimage-thumbnailer/releases) with the `--install` flag.
 
