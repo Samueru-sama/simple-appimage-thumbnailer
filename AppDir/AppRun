@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+APPIMAGE=${APPIMAGE:-$0}
+CURRENTDIR="$(cd "${0%/*}" && echo "$PWD")"
+PATH="$CURRENTDIR/bin:$PATH"
+export PATH
+
+BINDIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
+DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
+THUMBNAIL_ENTRY="$DATADIR"/thumbnailers/simple-appimage-thumbnailer.thumbnailer
+
+if [ "$1" = "--install" ]; then
+	cp -v "$CURRENTDIR"/simple-appimage-thumbnailer.thumbnailer "$THUMBNAIL_ENTRY"
+	echo "Added thumbnail entry to $THUMBNAIL_ENTRY"
+
+	# thunar for some reason needs it in PATH
+	mkdir -p "$BINDIR"
+	if [ ! -e "$BINDIR"/sat ]; then
+		ln -sv "$APPIMAGE" "$BINDIR"/sat
+	fi
+	echo "${APPIMAGE##*/} installed!"
+else
+	exec sat "$@"
+fi
