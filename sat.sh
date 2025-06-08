@@ -1,23 +1,14 @@
 #!/bin/sh
 
+set -e
+
 if [ "$SAT_DEBUG" = 1 ]; then
 	set -x
+	echo "$@" >> /tmp/.sat-debug
 fi
 
-set -eu
-
-DEPENDENCIES="
-	awk
-	dwarfs
-	grep
-	head
-	mkdir
-	od
-	readlink
-	squashfuse
-	tail
-	umount
-"
+VERSION=0.1
+TMPDIR="${TMPDIR:-/tmp}"
 
 _error() {
 	>&2 printf '\n%s\n\n' " ERROR: $*"
@@ -25,37 +16,35 @@ _error() {
 }
 
 _usage() {
-	echo " USAGE: $0 </path/to/appimage> </path/to/out/thumbnail> <size>"
+	echo " USAGE: ${0##*/} </path/to/appimage> </path/to/out/thumbnail> <size>"
 	exit 1
 }
 
 _cleanup() {
 	if [ -d "$MOUNT_POINT" ]; then
-		umount "$MOUNT_POINT" || true
+		umount "$MOUNT_POINT"
 		rm -rf "$MOUNT_POINT"
 	fi
-
 }
 
 trap _cleanup INT TERM EXIT
 
 _dep_check() {
-	for d do
-		if ! command -v "$d" 1>/dev/null; then
+	while read -r d; do
+		if ! command -v "$d" >/dev/null; then
 			_error "Missing dependency $d"
 		fi
-	done
-}
-
-_install() {
-	if ! grep -q "$APPIMAGE" "$THUMBNAIL_ENTRY"; then
-		>&2 echo "Adding thumbnail entry for $APPIMAGE"
-		printf '%s\n%s\n%s\n%s\n'             \
-			"[Thumbnailer Entry]"         \
-			"TryExec=\"$APPIMAGE\""       \
-			"Exec=\"$APPIMAGE\" %i %o %s" \
-			"MimeType=application/vnd.appimage;" > "$THUMBNAIL_ENTRY"
-	fi
+	done <<-EOF
+	awk
+	dwarfs
+	head
+	mkdir
+	od
+	readlink
+	squashfuse
+	tail
+	umount
+	EOF
 }
 
 _find_offset() {
@@ -141,7 +130,7 @@ _get_thumbnail() {
 	elif command -v convert 1>/dev/null; then
 		convert -background none "$TMPICON" -thumbnail "$SIZE" PNG:"$OUTPUT"
 	elif command -v ffmpeg 1>/dev/null; then
-		ffmpeg -i "$TMPICON" -vf "scale=$SIZE:-1" "$OUTPUT"
+		ffmpeg -y -i "$TMPICON" -vf "scale=$SIZE:-1" "$OUTPUT"
 	elif command -v vipsthumbnail 1>/dev/null; then
 		vipsthumbnail "$TMPICON" --size "$SIZE" -o "$OUTPUT"
 	else
@@ -150,25 +139,18 @@ _get_thumbnail() {
 }
 
 # Start
-if [ "$#" -lt 3 ]; then
+if [ "$1" = "--version" ]; then
+	echo "$VERSION"
+	exit 0
+elif [ "$#" -lt 3 ]; then
 	_usage
 fi
 
-CURRENTDIR="$(cd "${0%/*}" && echo "$PWD")"
-if [ -d "$CURRENTDIR"/bin ]; then
-	export PATH="$CURRENTDIR/bin:$PATH"
-fi
-
-_dep_check $DEPENDENCIES
+_dep_check
 
 INPUT="$(readlink -f "$1")"
 OUTPUT="$(readlink -f "$2")"
 SIZE="$3"
-TMPDIR="${TMPDIR:-/tmp}"
-DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
-THUMBNAIL_ENTRY="$DATADIR/thumbnailers/simple-appimage-thumbnailer.thumbnailer"
-
-_install
 
 if ! _is_appimage "$INPUT"; then
 	_error "'$INPUT' is NOT an AppImage"
